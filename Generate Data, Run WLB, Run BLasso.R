@@ -1,14 +1,81 @@
 # Bayesian Lasso Elasticity
 rm(list = ls())
-# Absolutely Continuous Spikes
+
+setwd("Set your WD here")
+set.seed(251093)
+
 library('coda')
 library('gamlr')
 library('glmnet')
 library('dplyr')
+library('tmvtnorm')
 
-load("Load Image here")
 
-df <- data
+###Simulate Data###
+n <- 10000
+k <- 50
+sigma_zeta <- 60
+
+# Willingness-to-Pay (WTP) heterogeneity as a function of observable characteristics.
+
+active_alpha <- c(1,0.5,0.5,0.4,0.7,0.2,0.2) # Better. 
+alpha <- c(active_alpha, rep(0,5), active_alpha, rep(0,k-5-2*length(active_alpha)))
+
+
+active_beta <- c(-0.002,-0.007,-0.005,-0.003) 
+beta <- c(rep(0,5), active_beta,rep(0,k-5-2*length(active_beta)), active_beta) 
+
+# Generate correlation matrix
+corr_x <- matrix(nrow = k, ncol = k)
+for(i in 1:k) for(j in 1:k) corr_x[i,j] <- 0.5**abs(i-j)
+
+
+x_low <- rtmvnorm(0.65*n, mean = c(rep(1,5), rep(100,length(active_beta)), rep(1,k-5-2*length(active_beta)),
+                                  rep(100,length(active_beta))), sigma = corr_x, lower = rep(0,k))
+x1 <-rtmvnorm(0.1*n, mean = rep(1,k), sigma = corr_x, lower = rep(0,k))
+x2 <-rtmvnorm(0.05*n, mean = rep(20,k), sigma = corr_x, lower = rep(0,k))
+x3 <-rtmvnorm(0.2*n, mean = rep(50,k), sigma = corr_x, lower = rep(0,k))
+x <- rbind(x_low,x1,x2,x3)
+
+
+zeta <- rnorm(n, mean = 0, sd = sigma_zeta)
+
+
+# Generate random price data for each observation
+price_vec <- c(19,39,59,79,99,159,199,249,299,399)
+blocks <- (1/length(price_vec))*1:length(price_vec)
+u <- runif(n)
+prices <- rep(NA,n)
+
+for(i in 1:n){
+  for(j in 1:length(price_vec)){
+    if(u[i] - blocks[j] <= 0 ){
+      prices[i] <- price_vec[j]
+      break
+    }
+  }
+}
+
+dU <- x %*% alpha + (x %*% beta) * prices + zeta
+
+conversion_rate <- matrix(data = NA, nrow = 1, ncol = length(price_vec ))
+colnames(conversion_rate) <- c(as.character(price_vec))
+
+for(i in 1:length(price_vec)){
+  conversion_rate[1,i] <- (length(which(prices[which(dU > 0)] == price_vec[i])) / 
+                                    length(which(prices == price_vec[i])))
+ 
+}
+conversion_rate
+
+# Signal-to-noise ratio
+StN <- sqrt(sum((x %*% alpha + x %*% beta) ^ 2)) / (sqrt(n) * sigma_zeta)
+
+# Final (observed) data set
+y <- as.integer(dU > 0)
+data <- cbind(dU,y,prices)
+colnames(data)[1] <- 'dU'
+df <- as.data.frame(cbind(data,x))
 
 # Estimation
 colnames(df)[4:53] <- paste0('X',1:50)
@@ -35,28 +102,20 @@ df <- as.data.frame(df)
 
 N <- length(y)
 
-# Bayesian Lasso
+### Bayesian Lasso ###
 draws <- blasso_probit(X,y, iter = 30000, fix_sd = 1)
 
 betas <- draws$betas
 
-saveRDS(betas, file = 'C:/Users/FMelchio/Desktop/Uni Stuff/Kandidat/Seminar - Bayesian Econometrics/Forskellig Demand Kurve/Første/betas.Rda')
-
-
-# Read file again
-betas <- readRDS(file = 'C:/Users/FMelchio/Desktop/Uni Stuff/Kandidat/Seminar - Bayesian Econometrics/Forskellig Demand Kurve/Første/betas.Rda')
 betas <- betas[28001:30000,]
+
 post_betas <- as.mcmc(betas)
 plot(post_betas[,50:70])
-mcmc1 <- plot(post_betas[,c(5,24,51,85)])
-mcmclasso <-plot(post_betasLasso[,c(5,24,51,85)])
-grid.arrange(mcmc1,mcmclasso, ncol=4)
-
+plot(post_betas[,c(5,24,51,85)])
 plot(post_betas[,90:100])
 
-post_betas
-# Calculating the elasticity
 
+# Calculating the elasticity
 alpha_theta_lasso <- t(betas[,1:50])
 beta_theta_lasso <- t(betas[,51:100])
 no_draws <- dim(betas)[1]
@@ -79,9 +138,9 @@ for(i in 1:no_draws){
 }
 
 
-###### Weighted Likelihood Bootstrap########
+### Weighted Likelihood Bootstrap###
 
-B <- 100
+B <- 100 #Number of Bootstraps
 
 #Generate Containers
 alpha_theta <- matrix(data = NA , nrow = ncol(x), ncol = B)
@@ -114,7 +173,7 @@ for(i in 1:B){
   Price_Opt[i] <- price_vec[which.max(Profit[i,])]
 } 
 
-######Run True Data######
+###Calculate Elasticity using true data###
 
 #Profit and elasticity given "real" alpha and beta
 profit_real <- rep(NA, length(price_vec))
@@ -127,9 +186,9 @@ for(j in 1:length(price_vec)){
 }
 
 
-#######MSE, ELasticities at mean and profit at mean#####
+###MSE, ELasticities at mean and profit at mean####
 
-####Mean Squared Error####
+##Mean Squared Error##
 
 #Generate Containers
 SE_WLB     <- matrix(data=NA, nrow=B, ncol=length(price_vec))
@@ -190,7 +249,7 @@ for(i in 1:length(price_vec)){
   elas_BLasso[i] <- sum(elasticity_lasso[,i])/no_draws
 }
 
-save.image("Save as image here")
+save.image("data.RData")
 
 
 
