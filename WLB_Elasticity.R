@@ -1,14 +1,12 @@
 
 rm(list = ls())
 set.seed(12345)
-# Load working directory either at home or at CSS
-if(substring(getwd(),0,1) == 'C'){
-  setwd('C:/Users/fhk798/OneDrive/R Codes/') # PC
-} else{
-  setwd('/Users/ditlevkf/OneDrive/R Codes/') # Mac
-}
 
-df <- readRDS(file = 'Seminar_BE/data.Rda')
+# Set working direct
+
+setwd('Set your own working directory here')
+
+df <- readRDS(file = 'data.Rda')
 
 library('gamlr')
 library('glmnet')
@@ -74,11 +72,5 @@ for(i in 1:B){
     elasticity_discrete[i,j] <- (((sum(as.numeric(dU_1>0)) - sum(as.numeric(dU_0)>0))) / sum(as.numeric(dU_0)>0)) * 100
   }
 }
-
-theta <- rbind(alpha_theta,beta_theta)
-
-saveRDS(theta, file = 'Seminar_BE/WLB/WLB_data/thetas.Rda')
-saveRDS(elasticity_discrete, file = 'Seminar_BE/WLB/WLB_data/elasticities.Rda')
-saveRDS(lambda, file = 'Seminar_BE/WLB/WLB_data/lambdas.Rda')
 
 
