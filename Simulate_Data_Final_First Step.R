@@ -1,12 +1,8 @@
 # Generate artificial ZipRecruiter data
 rm(list = ls())
 
-# Load working directory either at home or at CSS
-if(substring(getwd(),0,1) == 'C'){
-  setwd('C:/Users/fhk798/OneDrive/R Codes/') # PC
-} else{
-  setwd('/Users/ditlevkf/OneDrive/R Codes/') # Mac
-}
+setwd("Set your own WD here")
+
 
 set.seed(251093)
 library('tmvtnorm')
@@ -38,14 +34,11 @@ x_low <- rtmvnorm(0.65*n, mean = c(rep(1,5), rep(100,length(active_beta)), rep(1
 x1 <-rtmvnorm(0.1*n, mean = rep(1,k), sigma = corr_x, lower = rep(0,k))
 x2 <-rtmvnorm(0.05*n, mean = rep(20,k), sigma = corr_x, lower = rep(0,k))
 x3 <-rtmvnorm(0.2*n, mean = rep(50,k), sigma = corr_x, lower = rep(0,k))
-
-
 x <- rbind(x_low,x1,x2,x3)
 
-zeta <- rnorm(n, mean = 0, sd = sigma_zeta)
-#zeta <- rlogis(n, location = 0,scale = 10) # Logistic error term
 
-#plot(density(x %*% alpha))
+zeta <- rnorm(n, mean = 0, sd = sigma_zeta)
+
 
 # Generate random price data for each observation
 price_vec <- c(19,39,59,79,99,159,199,249,299,399)
@@ -84,5 +77,5 @@ data <- cbind(dU,y,prices)
 colnames(data)[1] <- 'dU'
 data <- as.data.frame(cbind(data,x))
 
-saveRDS(data, file = 'Seminar_BE/data.Rda')
+saveRDS(data, file = 'data.Rda')
 
