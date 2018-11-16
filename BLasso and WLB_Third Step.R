@@ -6,15 +6,9 @@ library('gamlr')
 library('glmnet')
 library('dplyr')
 
-# Load working directory either at home or at CSS
-if(substring(getwd(),0,1) == 'C'){
-  setwd('C:/Users/fhk798/OneDrive/R Codes/') # PC
-} else{
-  setwd('/Users/ditlevkf/OneDrive/R Codes/') # Mac
-}
+load("Load Image here")
 
-source('Seminar_BE/Bayesian Lasso/blasso_probit_func2.R')
-df <- readRDS(file = 'Seminar_BE/data.Rda')
+df <- data
 
 # Estimation
 colnames(df)[4:53] <- paste0('X',1:50)
@@ -46,11 +40,11 @@ draws <- blasso_probit(X,y, iter = 30000, fix_sd = 1)
 
 betas <- draws$betas
 
-saveRDS(betas, file = 'C:/Users/FMelchio/Desktop/Uni Stuff/Kandidat/Seminar - Bayesian Econometrics/Forskellig Demand Kurve/Første/betas.Rda')
+saveRDS(betas, file = 'C:/Users/FMelchio/Desktop/Uni Stuff/Kandidat/Seminar - Bayesian Econometrics/Forskellig Demand Kurve/FÃ¸rste/betas.Rda')
 
 
 # Read file again
-betas <- readRDS(file = 'C:/Users/FMelchio/Desktop/Uni Stuff/Kandidat/Seminar - Bayesian Econometrics/Forskellig Demand Kurve/Første/betas.Rda')
+betas <- readRDS(file = 'C:/Users/FMelchio/Desktop/Uni Stuff/Kandidat/Seminar - Bayesian Econometrics/Forskellig Demand Kurve/FÃ¸rste/betas.Rda')
 betas <- betas[28001:30000,]
 post_betas <- as.mcmc(betas)
 plot(post_betas[,50:70])
