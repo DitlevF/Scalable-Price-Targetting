@@ -1,19 +1,16 @@
 
 rm(list = ls())
 set.seed(251093)
-# Load working directory either at home or at CSS
-if(substring(getwd(),0,1) == 'C'){
-  setwd('C:/Users/fhk798/OneDrive/R Codes/') # PC
-} else{
-  setwd('/Users/ditlevkf/OneDrive/R Codes/') # Mac
-}
 
-
+set
 library('dplyr')
 library('ggplot2')
 library('gridExtra')
 
-load("Load your image here")
+
+setwd("Set your WD here")
+
+load("data.RData")
 
   
 #Plot "real" profit at different prices. Add Profitmaximising prices for WLB and Bayesian Lasso.
