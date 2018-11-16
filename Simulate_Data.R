@@ -1,19 +1,15 @@
 # Generate artificial ZipRecruiter data
 rm(list = ls())
 
-# Load working directory either at home or at CSS
-if(substring(getwd(),0,1) == 'C'){
-  setwd('C:/Users/fhk798/OneDrive/R Codes/') # PC
-} else{
-  setwd('/Users/ditlevkf/OneDrive/R Codes/') # Mac
-}
+# Set your own working directory
+
+setwd('XXX')
 
 set.seed(251093)
 library('tmvtnorm')
 n <- 10000
 k <- 50
 sigma_zeta <- 60
-#sigma_zeta <- pi/3
 
 # Willingness-to-Pay (WTP) heterogeneity as a function of observable characteristics.
 
@@ -43,9 +39,6 @@ x3 <-rtmvnorm(0.2*n, mean = rep(50,k), sigma = corr_x, lower = rep(0,k))
 x <- rbind(x_low,x1,x2,x3)
 
 zeta <- rnorm(n, mean = 0, sd = sigma_zeta)
-#zeta <- rlogis(n, location = 0,scale = 10) # Logistic error term
-
-#plot(density(x %*% alpha))
 
 # Generate random price data for each observation
 price_vec <- c(19,39,59,79,99,159,199,249,299,399)
