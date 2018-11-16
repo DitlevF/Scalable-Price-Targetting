@@ -77,5 +77,5 @@ data <- cbind(dU,y,prices)
 colnames(data)[1] <- 'dU'
 data <- as.data.frame(cbind(data,x))
 
-save.image("Set WD here")
+save.image("Set WD here & /data.RData")
 
