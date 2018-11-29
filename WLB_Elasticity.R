@@ -1,12 +1,8 @@
 
 rm(list = ls())
-set.seed(12345)
-# Load working directory either at home or at CSS
-if(substring(getwd(),0,1) == 'C'){
-  setwd('C:/Users/fhk798/OneDrive/R Codes/') # PC
-} else{
-  setwd('/Users/ditlevkf/OneDrive/R Codes/') # Mac
-}
+
+
+setwd('XX')
 
 df <- readRDS(file = 'Seminar_BE/data.Rda')
 
@@ -77,8 +73,8 @@ for(i in 1:B){
 
 theta <- rbind(alpha_theta,beta_theta)
 
-saveRDS(theta, file = 'Seminar_BE/WLB/WLB_data/thetas.Rda')
-saveRDS(elasticity_discrete, file = 'Seminar_BE/WLB/WLB_data/elasticities.Rda')
-saveRDS(lambda, file = 'Seminar_BE/WLB/WLB_data/lambdas.Rda')
+saveRDS(theta, file = 'thetas.Rda')
+saveRDS(elasticity_discrete, file = 'elasticities.Rda')
+saveRDS(lambda, file = 'lambdas.Rda')
 
 
