@@ -8,4 +8,3 @@ Please run the code in the following order:
 1. Run the blasso_probit_func 
 2. Run the Generate Data....
 3. Run the WLB & BLasso Plot
-  - You can skip part 1 & 2 and use the data we have generated to create the plots.
