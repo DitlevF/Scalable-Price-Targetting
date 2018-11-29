@@ -1,12 +1,8 @@
 # Generate artificial ZipRecruiter data
 rm(list = ls())
 
-# Load working directory either at home or at CSS
-if(substring(getwd(),0,1) == 'C'){
-  setwd('C:/Users/fhk798/OneDrive/R Codes/') # PC
-} else{
-  setwd('/Users/ditlevkf/OneDrive/R Codes/') # Mac
-}
+setwd('XX')
+
 
 set.seed(251095)
 library('tmvtnorm')
@@ -85,5 +81,5 @@ data <- cbind(dU,y,prices)
 colnames(data)[1] <- 'dU'
 data <- as.data.frame(cbind(data,x))
 
-saveRDS(data, file = 'Seminar_BE/data.Rda')
+saveRDS(data, file = 'data.Rda')
 
