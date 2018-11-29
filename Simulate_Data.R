@@ -12,14 +12,11 @@ sigma_zeta <- 500 # Use 150, 200, 300
 
 # Willingness-to-Pay (WTP) heterogeneity as a function of observable characteristics.
 
-active_alpha <- c(250,250,250,320,200,100,100)
-active_alpha <- c(1,0.5,0.5,0.4,0.7,0.2,0.2) # Better. 
+active_alpha <- c(1,0.5,0.5,0.4,0.7,0.2,0.2) 
 
 alpha <- c(active_alpha, rep(0,5), active_alpha, rep(0,k-5-2*length(active_alpha)))
 
-active_beta <- c(-2.0,-1.5,-1.5,-2)
 active_beta <- c(-0.002,-0.007,-0.005,-0.003) 
-
 
 beta <- c(rep(0,5), active_beta,rep(0,k-5-2*length(active_beta)), active_beta) 
 
